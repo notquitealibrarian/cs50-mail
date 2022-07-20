@@ -30,6 +30,10 @@ function load_mailbox(mailbox) {
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
+  var email_view = document.querySelector('#emails-view');
+
+  // Show the mailbox name
+    email_view.innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
   // Get the emails using the provided API
   fetch('/emails/' + mailbox)
@@ -38,11 +42,16 @@ function load_mailbox(mailbox) {
     // Print emails
     console.log(emails);
 
-    // ... do something else with emails ...
+    emails.forEach(email => {
+      let email_line = document.createElement('div');
+      email_line.innerHTML = `
+            <span class="sender col-3"> <b>${email['sender']}</b> </span>
+            <span class="subject col-6"> ${email['subject']} </span>
+            <span class="timestamp col-3"> ${email['timestamp']} </span>
+        `;
+      email_view.appendChild(email_line);
+    })
   });
-
-  // Show the mailbox name
-  document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 }
 
 function send_email(event) {
