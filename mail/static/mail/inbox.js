@@ -30,6 +30,8 @@ function load_mailbox(mailbox) {
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
+
+  // Allow easy access to the emails-view div by setting it to a variable
   var email_view = document.querySelector('#emails-view');
 
   // Show the mailbox name
@@ -42,13 +44,20 @@ function load_mailbox(mailbox) {
     // Print emails
     console.log(emails);
 
+    // Loops through each email in the retrieved emails
     emails.forEach(email => {
+
+      // Create new div to house the particular elements of each element
       let email_line = document.createElement('div');
+
+      // Sets the HTML of the created dev, displaying the sender, subject, and timestamp
       email_line.innerHTML = `
             <span class="sender col-3"> <b>${email['sender']}</b> </span>
             <span class="subject col-6"> ${email['subject']} </span>
             <span class="timestamp col-3"> ${email['timestamp']} </span>
         `;
+
+      // Adds the created div to the afore-fetched emails-view div
       email_view.appendChild(email_line);
     })
   });
