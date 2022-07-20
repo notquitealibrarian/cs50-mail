@@ -52,10 +52,19 @@ function load_mailbox(mailbox) {
 
       // Sets the HTML of the created dev, displaying the sender, subject, and timestamp
       email_line.innerHTML = `
-            <span class="sender col-3"> <b>${email['sender']}</b> </span>
-            <span class="subject col-6"> ${email['subject']} </span>
-            <span class="timestamp col-3"> ${email['timestamp']} </span>
-        `;
+        <span class="sender col-3"> <b>${email['sender']}</b> </span>
+        <span class="subject col-6"> ${email['subject']} </span>
+        <span class="timestamp col-3"> ${email['timestamp']} </span>
+      `;
+
+      // Styles the div to add 1) a border and 2) background (white if unread, gray if read)
+      email_line.style.border = "solid"
+      if (email['read'] === true) {
+        email_line.style.backgroundColor = 'gray';
+      }
+      else {
+        email_line.style.backgroundColor = 'white';
+      }
 
       // Adds the created div to the afore-fetched emails-view div
       email_view.appendChild(email_line);
