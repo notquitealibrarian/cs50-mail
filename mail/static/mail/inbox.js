@@ -31,8 +31,45 @@ function load_mailbox(mailbox) {
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
 
+  // Allow easy access to the emails-view div by setting it to a variable
+  var email_view = document.querySelector('#emails-view');
+
   // Show the mailbox name
-  document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+    email_view.innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+
+  // Get the emails using the provided API
+  fetch('/emails/' + mailbox)
+  .then(response => response.json())
+  .then(emails => {
+    // Print emails
+    console.log(emails);
+
+    // Loops through each email in the retrieved emails
+    emails.forEach(email => {
+
+      // Create new div to house the particular elements of each element
+      let email_line = document.createElement('div');
+
+      // Sets the HTML of the created dev, displaying the sender, subject, and timestamp
+      email_line.innerHTML = `
+        <span class="sender col-3"> <b>${email['sender']}</b> </span>
+        <span class="subject col-6"> ${email['subject']} </span>
+        <span class="timestamp col-3"> ${email['timestamp']} </span>
+      `;
+
+      // Styles the div to add 1) a border and 2) background (white if unread, gray if read)
+      email_line.style.border = "solid"
+      if (email['read'] === true) {
+        email_line.style.backgroundColor = 'gray';
+      }
+      else {
+        email_line.style.backgroundColor = 'white';
+      }
+
+      // Adds the created div to the afore-fetched emails-view div
+      email_view.appendChild(email_line);
+    })
+  });
 }
 
 function send_email(event) {
