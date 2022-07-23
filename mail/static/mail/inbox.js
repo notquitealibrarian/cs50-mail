@@ -58,7 +58,7 @@ function load_mailbox(mailbox) {
       `;
 
       // Styles the div to add 1) a border and 2) background (white if unread, gray if read)
-      email_line.style.border = "solid"
+      email_line.setAttribute("style", "border: solid; border-width: thin;");
       if (email['read'] === true) {
         email_line.style.backgroundColor = 'gray';
       }
@@ -66,15 +66,50 @@ function load_mailbox(mailbox) {
         email_line.style.backgroundColor = 'white';
       }
 
+      // Create event listener for each email, that, when clicked, loads the function to view an individual email, load_email(id)
+      email_line.addEventListener('click', () => load_email(email['id']));
+
       // Adds the created div to the afore-fetched emails-view div
       email_view.appendChild(email_line);
     })
   });
 }
 
+function load_email(id) {
+
+  // Allow easy access to the emails-view div by setting it to a variable
+  var email_view = document.querySelector('#emails-view');
+
+  // Use the existing API to get the attributes of a specific email, specified by the id provided to the method
+  fetch('/emails/' + id)
+    .then(response => response.json())
+    .then(email => {
+      // Print email
+      console.log(email);
+
+      // Overwrites the existing HTML for the emails-view div with the attributes of the selected email.
+      email_view.innerHTML = `
+        <ul class="list-group">
+          <li class="list-group-item"><b>From:</b> <span>${email['sender']}</span></li>
+          <li class="list-group-item"><b>To: </b><span>${email['recipients']}</span></li>
+          <li class="list-group-item"><b>Subject:</b> <span>${email['subject']}</span</li>
+          <li class="list-group-item"><b>Time:</b> <span>${email['timestamp']}</span></li>
+        </ul>
+        <p class="m-2">${email['body']}</p>
+      `;
+    });
+  
+  fetch('/emails/' + id, {
+    method: 'PUT',
+    body: JSON.stringify({
+      read: true
+    })
+  });
+}
+
 function send_email(event) {
 
-  // Prevents the "normal" behavior from this type of event
+  // Prevents the "normal" behavior from this type of event (submitting form)
   event.preventDefault()
 
   // Uses the provided API to "send" emails
