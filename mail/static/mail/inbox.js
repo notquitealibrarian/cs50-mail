@@ -67,7 +67,7 @@ function load_mailbox(mailbox) {
       }
 
       // Create event listener for each email, that, when clicked, loads the function to view an individual email, load_email(id)
-      email_line.addEventListener('click', load_email(email['id']));
+      email_line.addEventListener('click', () => load_email(email['id']));
 
       // Adds the created div to the afore-fetched emails-view div
       email_view.appendChild(email_line);
