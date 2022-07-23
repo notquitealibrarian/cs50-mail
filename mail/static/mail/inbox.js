@@ -97,7 +97,14 @@ function load_email(id) {
         </ul>
         <p class="m-2">${email['body']}</p>
       `;
-});
+    });
+  
+  fetch('/emails/' + id, {
+    method: 'PUT',
+    body: JSON.stringify({
+      read: true
+    })
+  });
 }
 
 function send_email(event) {
