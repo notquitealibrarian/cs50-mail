@@ -67,7 +67,7 @@ function load_mailbox(mailbox) {
       }
 
       // Create event listener for each email, that, when clicked, loads the function to view an individual email, load_email(id)
-      email_line.addEventListener('click', () => load_email(email['id']));
+      email_line.addEventListener('click', () => load_email(email['id']), mailbox);
 
       // Adds the created div to the afore-fetched emails-view div
       email_view.appendChild(email_line);
@@ -75,7 +75,7 @@ function load_mailbox(mailbox) {
   });
 }
 
-function load_email(id) {
+function load_email(id, box) {
 
   // Allow easy access to the emails-view div by setting it to a variable
   var email_view = document.querySelector('#emails-view');
@@ -87,16 +87,45 @@ function load_email(id) {
       // Print email
       console.log(email);
 
-      // Overwrites the existing HTML for the emails-view div with the attributes of the selected email.
-      email_view.innerHTML = `
-        <ul class="list-group">
-          <li class="list-group-item"><b>From:</b> <span>${email['sender']}</span></li>
-          <li class="list-group-item"><b>To: </b><span>${email['recipients']}</span></li>
-          <li class="list-group-item"><b>Subject:</b> <span>${email['subject']}</span</li>
-          <li class="list-group-item"><b>Time:</b> <span>${email['timestamp']}</span></li>
-        </ul>
-        <p class="m-2">${email['body']}</p>
-      `;
+      // Overwrite the existing HTML for the emails-view div with the attributes of the selected email.
+
+      // if box is inbox, need to show archive button TODO ADD BUTTON
+      if (box === 'inbox') {
+        email_view.innerHTML = `
+          <ul class="list-group">
+            <li class="list-group-item"><b>From:</b> <span>${email['sender']}</span></li>
+            <li class="list-group-item"><b>To: </b><span>${email['recipients']}</span></li>
+            <li class="list-group-item"><b>Subject:</b> <span>${email['subject']}</span</li>
+            <li class="list-group-item"><b>Time:</b> <span>${email['timestamp']}</span></li>
+          </ul>
+          <p class="m-2">${email['body']}</p>
+          `;
+      }
+
+      // if box is archive, need to show unarchive button TODO ADD BUTTON
+      else if (box === 'archive'){
+        email_view.innerHTML = `
+          <ul class="list-group">
+            <li class="list-group-item"><b>From:</b> <span>${email['sender']}</span></li>
+            <li class="list-group-item"><b>To: </b><span>${email['recipients']}</span></li>
+            <li class="list-group-item"><b>Subject:</b> <span>${email['subject']}</span</li>
+            <li class="list-group-item"><b>Time:</b> <span>${email['timestamp']}</span></li>
+          </ul>
+          <p class="m-2">${email['body']}</p>
+        `;}
+
+      // else box is sent, no need to show any extra button
+      else {
+        email_view.innerHTML = `
+          <ul class="list-group">
+            <li class="list-group-item"><b>From:</b> <span>${email['sender']}</span></li>
+            <li class="list-group-item"><b>To: </b><span>${email['recipients']}</span></li>
+            <li class="list-group-item"><b>Subject:</b> <span>${email['subject']}</span</li>
+            <li class="list-group-item"><b>Time:</b> <span>${email['timestamp']}</span></li>
+          </ul>
+          <p class="m-2">${email['body']}</p>
+        `;
+      }
     });
   
   fetch('/emails/' + id, {
