@@ -132,3 +132,7 @@ function send_email(event) {
   // Loads the sent mailbox after sending message.
   .then(response => load_mailbox('sent'));
 }
+
+function archive_email(email_id) {
+  pass
+}
