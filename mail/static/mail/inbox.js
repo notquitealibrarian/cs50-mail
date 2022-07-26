@@ -134,5 +134,10 @@ function send_email(event) {
 }
 
 function archive_email(email_id) {
-  pass
+  fetch('/emails/' + email_id, {
+    method: 'PUT',
+    body: JSON.stringify({
+        archived: true
+    })
+  })
 }
