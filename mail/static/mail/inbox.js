@@ -87,16 +87,72 @@ function load_email(id) {
       // Print email
       console.log(email);
 
-      // Overwrites the existing HTML for the emails-view div with the attributes of the selected email.
-      email_view.innerHTML = `
-        <ul class="list-group">
-          <li class="list-group-item"><b>From:</b> <span>${email['sender']}</span></li>
-          <li class="list-group-item"><b>To: </b><span>${email['recipients']}</span></li>
-          <li class="list-group-item"><b>Subject:</b> <span>${email['subject']}</span</li>
-          <li class="list-group-item"><b>Time:</b> <span>${email['timestamp']}</span></li>
-        </ul>
-        <p class="m-2">${email['body']}</p>
-      `;
+      // Overwrite the existing HTML for the emails-view div with the attributes of the selected email.
+
+      // if box is inbox, need to show archive button
+      if (email['archived'] == false) {
+        email_view.innerHTML = `
+          <ul class="list-group">
+            <li class="list-group-item"><b>From:</b> <span>${email['sender']}</span></li>
+            <li class="list-group-item"><b>To: </b><span>${email['recipients']}</span></li>
+            <li class="list-group-item"><b>Subject:</b> <span>${email['subject']}</span</li>
+            <li class="list-group-item"><b>Time:</b> <span>${email['timestamp']}</span></li>
+          </ul>
+          <p class="m-2">${email['body']}</p>
+          `;
+        const archive_button = document.createElement('button');
+        archive_button.className = "btn-primary m-1";
+        archive_button.innerHTML = "Archive";
+        archive_button.addEventListener('click', function() {
+          fetch('/emails/' + id, {
+            method: 'PUT',
+            body: JSON.stringify({
+              archived: true
+            })
+          })
+          .then(response => load_mailbox('inbox'))
+          });
+        email_view.append(archive_button);
+      }
+
+      // if box is archive, need to show unarchive button TODO ADD BUTTON
+      else if (email['archived'] == true){
+        email_view.innerHTML = `
+          <ul class="list-group">
+            <li class="list-group-item"><b>From:</b> <span>${email['sender']}</span></li>
+            <li class="list-group-item"><b>To: </b><span>${email['recipients']}</span></li>
+            <li class="list-group-item"><b>Subject:</b> <span>${email['subject']}</span</li>
+            <li class="list-group-item"><b>Time:</b> <span>${email['timestamp']}</span></li>
+          </ul>
+          <p class="m-2">${email['body']}</p>
+          `;
+        const archive_button = document.createElement('button');
+        archive_button.className = "btn-primary m-1";
+        archive_button.innerHTML = "Un-archive";
+        archive_button.addEventListener('click', function() {
+          fetch('/emails/' + id, {
+            method: 'PUT',
+            body: JSON.stringify({
+              archived: false
+            })
+          })
+          .then(response => load_mailbox('inbox'))
+          });
+        email_view.append(archive_button);
+      }
+
+      // else box is sent, no need to show any extra button
+      else {
+        email_view.innerHTML = `
+          <ul class="list-group">
+            <li class="list-group-item"><b>From:</b> <span>${email['sender']}</span></li>
+            <li class="list-group-item"><b>To: </b><span>${email['recipients']}</span></li>
+            <li class="list-group-item"><b>Subject:</b> <span>${email['subject']}</span</li>
+            <li class="list-group-item"><b>Time:</b> <span>${email['timestamp']}</span></li>
+          </ul>
+          <p class="m-2">${email['body']}</p>
+        `;
+      }
     });
   
   fetch('/emails/' + id, {
@@ -131,4 +187,13 @@ function send_email(event) {
 
   // Loads the sent mailbox after sending message.
   .then(response => load_mailbox('sent'));
+}
+
+function archive_email(email_id) {
+  fetch('/emails/' + email_id, {
+    method: 'PUT',
+    body: JSON.stringify({
+        archived: true
+    })
+  })
 }
