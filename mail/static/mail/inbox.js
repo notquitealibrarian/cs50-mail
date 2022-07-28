@@ -67,7 +67,7 @@ function load_mailbox(mailbox) {
       }
 
       // Create event listener for each email, that, when clicked, loads the function to view an individual email, load_email(id)
-      email_line.addEventListener('click', () => load_email(email['id']), mailbox);
+      email_line.addEventListener('click', () => load_email(email['id']));
 
       // Adds the created div to the afore-fetched emails-view div
       email_view.appendChild(email_line);
@@ -75,7 +75,7 @@ function load_mailbox(mailbox) {
   });
 }
 
-function load_email(id, box) {
+function load_email(id) {
 
   // Allow easy access to the emails-view div by setting it to a variable
   var email_view = document.querySelector('#emails-view');
@@ -90,7 +90,7 @@ function load_email(id, box) {
       // Overwrite the existing HTML for the emails-view div with the attributes of the selected email.
 
       // if box is inbox, need to show archive button
-      if (box === 'inbox') {
+      if (email['archived'] == false) {
         email_view.innerHTML = `
           <ul class="list-group">
             <li class="list-group-item"><b>From:</b> <span>${email['sender']}</span></li>
@@ -100,9 +100,9 @@ function load_email(id, box) {
           </ul>
           <p class="m-2">${email['body']}</p>
           `;
-        archive_button = document.createElement('button');
+        const archive_button = document.createElement('button');
         archive_button.className = "btn-primary m-1";
-        archive_button.innerHTML = "Un-archive";
+        archive_button.innerHTML = "Archive";
         archive_button.addEventListener('click', function() {
           fetch('/emails/' + id, {
             method: 'PUT',
@@ -112,11 +112,11 @@ function load_email(id, box) {
           })
           .then(response => load_mailbox('inbox'))
           });
-        email_view.appendChild(archive_button);
+        email_view.append(archive_button);
       }
 
       // if box is archive, need to show unarchive button TODO ADD BUTTON
-      else if (box === 'archive'){
+      else if (email['archived'] == true){
         email_view.innerHTML = `
           <ul class="list-group">
             <li class="list-group-item"><b>From:</b> <span>${email['sender']}</span></li>
@@ -126,7 +126,7 @@ function load_email(id, box) {
           </ul>
           <p class="m-2">${email['body']}</p>
           `;
-        archive_button = document.createElement('button');
+        const archive_button = document.createElement('button');
         archive_button.className = "btn-primary m-1";
         archive_button.innerHTML = "Un-archive";
         archive_button.addEventListener('click', function() {
@@ -138,7 +138,7 @@ function load_email(id, box) {
           })
           .then(response => load_mailbox('inbox'))
           });
-        email_view.appendChild(archive_button);
+        email_view.append(archive_button);
       }
 
       // else box is sent, no need to show any extra button
